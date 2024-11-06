@@ -7,12 +7,11 @@ const input = document.querySelector('input');
 const current = document.querySelector('#current');
 
 const numbers = "1234567890";
-const operators = "+-/*";
+const operators = "+-/*=";
 
 let valStack = []; // Hold operands 
+let newVal = []; // Hold value 
 let calcStack = []; // Hold operators 
-let operandCount = 0;
-let digits = 0;
 
 const calc = document.querySelector('.calc');
 const buttons = document.querySelectorAll('button');
@@ -22,69 +21,74 @@ buttons.forEach(button => {
         console.log(button.textContent);
 
         if (numbers.includes(button.textContent)) {
-            valStack.push(button.textContent);
-            digits++;
-            console.log(valStack);
-            console.log(calcStack);
+            newVal.push(button.textContent);
 
             input.textContent = input.textContent + '' + button.textContent;
         }
         if (operators.includes(button.textContent)) {
-            calcStack.push(button.textContent);
-            console.log(valStack);
-            let operand = valStack.join('');
-            valStack.splice(operandCount, digits);
-            digits = 0;
+            let operand = newVal.join('');
             valStack.push(operand);
-            operandCount++;
+            newVal = [];
+            if (button.textContent == "=") {
+                console.log("I made it");
+                let answer = valStack.reduce((a, b) => operate(a, b));
+                console.log(answer);
+                valStack = [];
+                newVal = [];
+                calcStack = [];
+                return;
+            }
+            calcStack.push(button.textContent);
             console.log(valStack);
             console.log(calcStack);
         }
         if (button.textContent == "AC") {
             valStack = [];
+            newVal = [];
             calcStack = [];
-            operandCount = 0;
-            digits = 0;
             console.log(valStack);
             console.log(calcStack);
         }
         if (button.textContent == "C") {
-            valStack.pop();
-            calcStack.pop();
-            operandCount--;
-            digits = 0;
+            newVal = [];
             console.log(valStack);
             console.log(calcStack);
         }
-
-
-
-
-
-
-
     });
 });
 
+function operate(answer, current) {
+    let a = parseInt(answer);
+    let b = parseInt(current);
+    let currOperator = calcStack.pop();
+    if (currOperator == "+") return add(a, b);
+    if (currOperator == "-") return subtract(a, b);
+    if (currOperator == "/") return divide(a, b);
+    if (currOperator == "*") return multiply(a, b);
+}
 
 
 // Addition function
 function add(a, b) {
+    console.log(a + ' + ' + b + ' = ' + (a+b))
 	return(a + b);
 };
 
 // Subtraction function
 function subtract(a, b) {
+    console.log(a + ' - ' + b + ' = ' + (a-b))
 	return(a - b);
 };
 
 // Multiplication function
 function multiply(a, b) {
+    console.log(a + ' * ' + b + ' = ' + (a*b))
 	return(a * b);
 };
 
 // Division function
 function divide(a, b) {
+    console.log(a + ' / ' + b + ' = ' + (a/b))
 	return(a / b);
 };
 
