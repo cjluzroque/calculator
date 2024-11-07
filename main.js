@@ -9,11 +9,13 @@ const current = document.querySelector('#current');
 const numbers = "1234567890";
 const operators = "+-/*";
 
+// Building infix expression 
 let valStack = []; // Hold operands 
 let newVal = []; // Hold value 
+
+// Building postfix expression 
 let stack = []; 
-let output = [12, 34, 56, 78, 90, '+', '+','+','+'];
-console.log(operate());
+let output = []; // This will be the postfix expression 
 
 const calc = document.querySelector('.calc');
 const buttons = document.querySelectorAll('button');
