@@ -14,7 +14,6 @@ let valStack = []; // Hold operands
 let newVal = []; // Hold value 
 
 // Building postfix expression 
-let stack = []; 
 let output = []; // This will be the postfix expression 
 
 const calc = document.querySelector('.calc');
@@ -53,20 +52,7 @@ buttons.forEach(button => {
         console.log("Turn into postfix: " + valStack);
 
         //Convert to postfix 
-        valStack.forEach(item => {
-            if (Number.isInteger(item)) {
-                output.push(item);
-            } else {
-              while ((stack != []) && (precedence(item) <= precedence(stack[-1]))) {
-                output.push(stack.pop());
-              } 
-              stack.push(item);
-            }
-        });
-        let items = stack.length;
-        for (i = 0; i < items; i++) output.push(stack.pop());
-        console.log(stack);
-        console.log(output);
+        output = infixToPostfix(valStack);
 
         //Calc postfix 
         console.log(operate());
@@ -76,6 +62,54 @@ buttons.forEach(button => {
     });
 });
 
+
+//Convert infix to postix 
+function infixToPostfix(s) {
+    let st = [];
+    let result = [];
+
+    for (let i = 0; i < s.length; i++) {
+        let c = s[i];
+
+        // If the scanned character is
+        // an operand, add it to the output string.
+        if (Number.isInteger(c)) {
+            result.push(c);
+        }
+
+        // If the scanned character is 
+        // an ‘(‘, push it to the stack.
+        else if (c === '(')
+            st.push('(');
+
+        // If the scanned character is an ‘)’,
+        // pop and add to the output string from the stack
+        // until an ‘(‘ is encountered.
+        else if (c === ')') {
+            while (st[st.length - 1] !== '(') {
+                result.push(st.pop());
+            }
+            st.pop();
+        }
+
+        // If an operator is scanned
+        else {
+            while (st.length && (precedence(c) < precedence(st[st.length - 1]) ||
+                                precedence(c) === precedence(st[st.length - 1]))) {
+                result.push(st.pop());
+            }
+            st.push(c);
+        }
+    }
+
+    // Pop all the remaining elements from the stack
+    while (st.length) {
+        result.push(st.pop());
+    }
+
+    console.log(result);
+    return(result);
+}
 
 //Calculate postfix
 function operate() {
