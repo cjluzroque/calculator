@@ -6,6 +6,7 @@ const input = document.querySelector('input');
 const numbers = "1234567890";
 const operators = "+-/*";
 let dec = false;
+let finalDec = false;
 
 // Building infix expression 
 let done = false;
@@ -19,24 +20,17 @@ let output = []; // This will be the postfix expression
 const calc = document.querySelector('.calc');
 const buttons = document.querySelectorAll('button');
 
-buttons.forEach(button => {
-    button.addEventListener("click", function () { 
-        if (done == true) {
-            expression = '';
-            input.value = expression;
-            console.log(input.value);
-            done = false;
-        }
-    });
-});
 
 buttons.forEach(button => {
     button.addEventListener("click", function () {
-        console.log(button.textContent);
-        console.log(done);
-        
+        console.log(button.textContent);        
 
         //Adding text to display 
+        if (done == true) {
+            expression = '';
+            input.value = expression;
+            done = false;
+        }
         expression += button.textContent;
         input.value = expression;
 
@@ -44,13 +38,12 @@ buttons.forEach(button => {
         if (button.textContent == ".") {
             if (dec) return;
             newVal.push(button.textContent);
-            console.log(newVal);
             dec = true;
+            finalDec = true;
             return;
         }
         if (numbers.includes(button.textContent)) {
             newVal.push(button.textContent);
-            console.log(newVal);
             return;
         } 
         if (operators.includes(button.textContent)) {
@@ -61,38 +54,37 @@ buttons.forEach(button => {
             }
             valStack.push(button.textContent);
             newVal = [];
-            console.log(valStack);
             dec = false;
             return;
         }
         if (button.textContent == "AC") {
             valStack = [];
             newVal = [];
-            console.log(valStack);
             dec = false;
             input.value = '';
             return;
         }
         if (button.textContent == "C") {
             newVal = [];
-            console.log(valStack);
-            console.log(newVal);
             dec = false;
             return;
         }
         //When entering = it will push the last value into valStack
         newVal.push(button.textContent);
         valStack.push(parseFloat(newVal.join('')));
-        console.log("Turn into postfix: " + valStack);
 
         //Convert to postfix 
         output = infixToPostfix(valStack);
 
         //Calc postfix 
         expression = operate();
-        input.value = expression;
+        if (isFloat(expression)) {
+            input.value = expression.toFixed(2);
+        } else {
+            input.value = expression;
+        }
+        finalDec=false;
         done = true;
-        console.log(done);
         valStack = []; 
         newVal = []; 
         return;
@@ -141,8 +133,6 @@ function infixToPostfix(s) {
     while (st.length) {
         result.push(st.pop());
     }
-
-    console.log("Infix: " + s + " Postfix: " + result);
     input.value = result;
     return(result);
 }
@@ -154,7 +144,6 @@ function operate() {
         // If the scanned character is an operand, push it to the stack.
         if (!isNaN(item)) {
             answer.push(item);
-            console.log(answer);
             return;
         }
         //  If the scanned character is an operator, pop two
@@ -163,20 +152,19 @@ function operate() {
         let val2 = answer.pop();
         switch(item) {
             case '+':
-                answer.push((val2 + val1).toFixed(2));
+                answer.push(val2 + val1);
                 break;
             case '-':
-                answer.push((val2 - val1).toFixed(2));
+                answer.push(val2 - val1);
                 break;
             case '/':
-                answer.push((val2 / val1).toFixed(2));
+                answer.push(val2 / val1);
                 break;
             case '*':
-                answer.push((val2 * val1).toFixed(2));
+                answer.push(val2 * val1);
                 break;
         }
     });
-    console.log("Answer: " + answer.slice('').pop());
     return(answer.pop());
 }
 
@@ -184,4 +172,12 @@ function operate() {
 function precedence(operator) {
     if((operator == "+") || (operator == "-")) return 11;
     if((operator == "*") || (operator == "/")) return 12;
+}
+
+function isFloat(n) {
+    return n === +n && n !== (n|0);
+}
+
+function isInteger(n) {
+    return n === +n && n === (n|0);
 }
