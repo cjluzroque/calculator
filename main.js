@@ -168,11 +168,3 @@ function precedence(operator) {
     if((operator == "+") || (operator == "-")) return 11;
     if((operator == "*") || (operator == "/")) return 12;
 }
-
-function isFloat(n) {
-    return n === +n && n !== (n|0);
-}
-
-function isInteger(n) {
-    return n === +n && n === (n|0);
-}
