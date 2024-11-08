@@ -6,16 +6,12 @@ const input = document.querySelector('input');
 const numbers = "1234567890";
 const operators = "+-/*";
 let dec = false;
-let finalDec = false;
 
 // Building infix expression 
 let done = false;
 let expression = '';
 let valStack = []; // Hold operands 
 let newVal = []; // Hold value 
-
-// Building postfix expression 
-let output = []; // This will be the postfix expression 
 
 const calc = document.querySelector('.calc');
 const buttons = document.querySelectorAll('button');
@@ -40,7 +36,6 @@ buttons.forEach(button => {
             newVal.push(button.textContent);
             console.log("Value is a decimal");
             dec = true;
-            finalDec = true;
             return;
         }
         if (numbers.includes(button.textContent)) {
@@ -79,19 +74,13 @@ buttons.forEach(button => {
         console.log("Starting infix to postfix conversion: (Infix) " + valStack);
 
         //Convert to postfix 
-        output = infixToPostfix(valStack);
+        let output = infixToPostfix(valStack);
         console.log("Operating on postfix expression: (Postfix) " + output);
 
         //Calc postfix 
-        expression = operate();
-        if (isFloat(expression)) {
-            input.value = expression.toFixed(2);
-            console.log("Answer: " + expression);
-        } else {
-            input.value = expression;
-            console.log("Answer: " + expression);
-        }
-        finalDec=false;
+        expression = operate(output);
+        console.log("Calculated: " + expression);
+        input.value = parseFloat(expression.toFixed(3));   
         done = true;
         console.log(" <----- DONE -----> ");
         valStack = []; 
@@ -107,20 +96,16 @@ function infixToPostfix(s) {
     let result = [];
 
     s.forEach(c => {
-        // If the scanned character is
-        // an operand, add it to the output string.
+        // If the scanned character is an operand, add it to the output string.
         if (!isNaN(c)) {
             result.push(c);
         }
 
-        // If the scanned character is 
-        // an ‘(‘, push it to the stack.
+        // If the scanned character is an ‘(‘, push it to the stack.
         else if (c === '(')
             st.push('(');
 
-        // If the scanned character is an ‘)’,
-        // pop and add to the output string from the stack
-        // until an ‘(‘ is encountered.
+        // If the scanned character is an ‘)’, pop and add to the output string from the stack until an ‘(‘ is encountered.
         else if (c === ')') {
             while (st[st.length - 1] !== '(') {
                 result.push(st.pop());
@@ -148,16 +133,15 @@ function infixToPostfix(s) {
 }
 
 //Calculate postfix
-function operate() {
+function operate(infix) {
     let answer = []; 
-    output.forEach(item => { 
+    infix.forEach(item => { 
         // If the scanned character is an operand, push it to the stack.
         if (!isNaN(item)) {
             answer.push(item);
             return;
         }
-        //  If the scanned character is an operator, pop two
-        // elements from stack apply the operator
+        //  If the scanned character is an operator, pop two elements from stack apply the operator
         let val1 = answer.pop();
         let val2 = answer.pop();
         switch(item) {
