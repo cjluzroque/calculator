@@ -23,7 +23,7 @@ const buttons = document.querySelectorAll('button');
 
 buttons.forEach(button => {
     button.addEventListener("click", function () {
-        console.log(button.textContent);        
+        console.log("Input: " + button.textContent);        
 
         //Adding text to display 
         if (done == true) {
@@ -38,6 +38,7 @@ buttons.forEach(button => {
         if (button.textContent == ".") {
             if (dec) return;
             newVal.push(button.textContent);
+            console.log("Value is a decimal");
             dec = true;
             finalDec = true;
             return;
@@ -53,6 +54,7 @@ buttons.forEach(button => {
                 valStack.push(parseInt(newVal.join('')));
             }
             valStack.push(button.textContent);
+            console.log("Added " + newVal + " to " + valStack);
             newVal = [];
             dec = false;
             return;
@@ -62,29 +64,36 @@ buttons.forEach(button => {
             newVal = [];
             dec = false;
             input.value = '';
+            console.log("Clearing All - valStack = " + valStack);
             return;
         }
         if (button.textContent == "C") {
             newVal = [];
             dec = false;
+            console.log("Clearing newVal - newVal = " + newVal);
             return;
         }
         //When entering = it will push the last value into valStack
         newVal.push(button.textContent);
         valStack.push(parseFloat(newVal.join('')));
+        console.log("Starting infix to postfix conversion: (Infix) " + valStack);
 
         //Convert to postfix 
         output = infixToPostfix(valStack);
+        console.log("Operating on postfix expression: (Postfix) " + output);
 
         //Calc postfix 
         expression = operate();
         if (isFloat(expression)) {
             input.value = expression.toFixed(2);
+            console.log("Answer: " + expression);
         } else {
             input.value = expression;
+            console.log("Answer: " + expression);
         }
         finalDec=false;
         done = true;
+        console.log(" <----- DONE -----> ");
         valStack = []; 
         newVal = []; 
         return;
@@ -134,6 +143,7 @@ function infixToPostfix(s) {
         result.push(st.pop());
     }
     input.value = result;
+    console.log("Success");
     return(result);
 }
 
@@ -165,6 +175,7 @@ function operate() {
                 break;
         }
     });
+    console.log("Success");
     return(answer.pop());
 }
 
