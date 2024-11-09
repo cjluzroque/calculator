@@ -33,7 +33,11 @@ input.addEventListener("keydown", (event) => {
 
         //Handling "Clear Last"
         if (event.key == "Backspace") {
-            clear();
+            console.log("Running backspace");
+            newVal = [];
+            valStack.pop();
+            expression = valStack.join('');
+            input.value = expression;
             return;
         } 
 
