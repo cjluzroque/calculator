@@ -9,7 +9,6 @@ const parenthesis = "()";
 let dec = false;
 
 // Building infix expression 
-let done = false;
 let expression = '';
 let valStack = []; // Hold operands 
 let newVal = []; // Hold value 
@@ -20,18 +19,40 @@ const buttons = document.querySelectorAll('button');
 
 buttons.forEach(button => {
     button.addEventListener("click", function () {
-        console.log("Input: " + button.textContent);        
+        console.log("Input: " + button.textContent);  
+
+        //Handling "Clear All"
+        if (button.textContent == "AC") {
+            if (valStack) {
+                valStack = [];
+                newVal = [];
+                dec = false;
+                input.value = '';
+                expression = '';
+                console.log("Clearing All - valStack = " + valStack);
+                return;
+            }
+            return;
+        }
+
+        //Handling "Clear Last"
+        if (button.textContent == "C") {
+            if (newVal) {
+                expression = expression.slice(0, 0-newVal.length);
+                input.value = expression;
+                newVal = [];
+                dec = false;
+                console.log("Clearing newVal - newVal = " + newVal);
+                return;
+            }
+            return;
+        } 
 
         //Adding text to display 
-        if (done == true) {
-            expression = '';
-            input.value = expression;
-            done = false;
-        }
         expression += button.textContent;
         input.value = expression;
 
-
+        //Handling decimal
         if (button.textContent == ".") {
             if (dec) return;
             newVal.push(button.textContent);
@@ -39,11 +60,15 @@ buttons.forEach(button => {
             dec = true;
             return;
         }
+
+        //Handling numbers
         if (numbers.includes(button.textContent)) {
             newVal.push(button.textContent);
             return;
         }
+
         /*
+        //Handling parenthesis
         if (parenthesis.includes(button.textContent)) {
             if (newVal == []) {
                 valStack.push(button.textContent);
@@ -61,26 +86,17 @@ buttons.forEach(button => {
             } 
         }
         */
+
+        //Handling operators
         if (operators.includes(button.textContent)) {
-            valStack.push(parseFloat(newVal.join('')));
+            if (newVal) {
+                valStack.push(parseFloat(newVal.join('')));
+                console.log("there is a newVal");
+            }
             valStack.push(button.textContent);
             console.log("Added " + newVal + " to " + valStack);
             newVal = [];
             dec = false;
-            return;
-        }
-        if (button.textContent == "AC") {
-            valStack = [];
-            newVal = [];
-            dec = false;
-            input.value = '';
-            console.log("Clearing All - valStack = " + valStack);
-            return;
-        }
-        if (button.textContent == "C") {
-            newVal = [];
-            dec = false;
-            console.log("Clearing newVal - newVal = " + newVal);
             return;
         }
         //When entering = it will push the last value into valStack
@@ -95,11 +111,12 @@ buttons.forEach(button => {
         //Calc postfix 
         expression = operate(output);
         console.log("Calculated: " + expression);
+        let nextVal = parseFloat(expression.toFixed(3));
         input.value = parseFloat(expression.toFixed(3));   
-        done = true;
         console.log(" <----- DONE -----> ");
-        valStack = []; 
-        newVal = []; 
+        valStack = [];
+        valStack.push(nextVal);
+        newVal = false; 
         return;
     });
 });
