@@ -12,6 +12,7 @@ let dec = false;
 let expression = '';
 let valStack = []; // Hold operands 
 let newVal = []; // Hold value 
+let currAnswer = false; // Will hold previous answer
 
 const calc = document.querySelector('.calc');
 const buttons = document.querySelectorAll('button');
@@ -63,6 +64,15 @@ buttons.forEach(button => {
 
         //Handling numbers
         if (numbers.includes(button.textContent)) {
+            if (currAnswer) {
+                valStack = [];
+                currAnswer = false;
+                console.log("Clear answer as new input");
+                newVal = [button.textContent];
+                expression = button.textContent;
+                input.value = expression;
+                return;
+            }
             newVal.push(button.textContent);
             return;
         }
@@ -89,6 +99,7 @@ buttons.forEach(button => {
 
         //Handling operators
         if (operators.includes(button.textContent)) {
+            currAnswer = false;
             if (newVal) {
                 valStack.push(parseFloat(newVal.join('')));
                 console.log("there is a newVal");
@@ -99,6 +110,7 @@ buttons.forEach(button => {
             dec = false;
             return;
         }
+
         //When entering = it will push the last value into valStack
         newVal.push(button.textContent);
         valStack.push(parseFloat(newVal.join('')));
@@ -111,11 +123,11 @@ buttons.forEach(button => {
         //Calc postfix 
         expression = operate(output);
         console.log("Calculated: " + expression);
-        let nextVal = parseFloat(expression.toFixed(3));
+        currAnswer = parseFloat(expression.toFixed(3));
         input.value = parseFloat(expression.toFixed(3));   
         console.log(" <----- DONE -----> ");
         valStack = [];
-        valStack.push(nextVal);
+        valStack.push(currAnswer);
         newVal = false; 
         return;
     });
