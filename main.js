@@ -44,6 +44,7 @@ input.addEventListener("keydown", (event) => {
         if (!(event.key == "Enter")) {
             if ((event.key == ".") && (newVal.length === 0)) expression = "0";
             if (operators.includes(event.key) && (newVal.length === 0)) return;
+            if ((event.key == ".") && dec) return;
             expression += event.key;
             input.value = expression;
         }
@@ -136,6 +137,7 @@ buttons.forEach(button => {
         if (!(button.textContent == "=")) {
             if ((button.textContent == ".") && (newVal.length === 0)) expression = "0";
             if (operators.includes(button.textContent) && (newVal.length === 0)) return;
+            if ((button.textContent == ".") && dec) return;
             expression += button.textContent;
             input.value = expression;
         }
