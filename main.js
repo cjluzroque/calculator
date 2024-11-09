@@ -42,6 +42,7 @@ input.addEventListener("keydown", (event) => {
 
         //Adding text to display 
         if (!((event.key == "=") || (event.key == "Enter"))) {
+            if ((event.key == ".") && (newVal = [])) expression = "0";
             expression += event.key;
             input.value = expression;
         }
@@ -128,6 +129,7 @@ buttons.forEach(button => {
 
         //Adding text to display 
         if (!(button.textContent == "=")) {
+            if ((button.textContent == ".") && (newVal = [])) expression = "0";
             expression += button.textContent;
             input.value = expression;
         }
@@ -211,6 +213,7 @@ function clear() {
 //Function for DECIMAL input 
 function addDecimal () {
     if (dec) return;
+    if (newVal == []) newVal.push("0");
     newVal.push(".");
     console.log("Value is a decimal");
     dec = true;
