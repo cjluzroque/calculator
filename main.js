@@ -41,8 +41,9 @@ input.addEventListener("keydown", (event) => {
         } 
 
         //Adding text to display 
-        if (!((event.key == "=") || (event.key == "Enter"))) {
-            if ((event.key == ".") && (newVal = [])) expression = "0";
+        if (!(event.key == "=")) {
+            if ((event.key == ".") && (newVal.length === 0)) expression = "0";
+            if (operators.includes(event.key) && (newVal.length === 0)) return;
             expression += event.key;
             input.value = expression;
         }
@@ -168,26 +169,25 @@ buttons.forEach(button => {
         //When entering = it will push the last value into valStack
         if (valStack.length === 0 && newVal.length === 0) {
             return;
-        } else {
-            newVal.push(button.textContent);
-            valStack.push(parseFloat(newVal.join('')));
-            console.log("Starting infix to postfix conversion: (Infix) " + valStack);
-
-            //Convert to postfix 
-            let output = infixToPostfix(valStack);
-            console.log("Operating on postfix expression: (Postfix) " + output);
-
-            //Calc postfix 
-            expression = operate(output);
-            console.log("Calculated: " + expression);
-            currAnswer = parseFloat(expression.toFixed(3));
-            input.value = (parseFloat(expression.toFixed(3)) == "Infinity") ? "Yea right" : parseFloat(expression.toFixed(3)); // No dividing by 0
-            console.log(" <----- DONE -----> ");
-            valStack = [];
-            if (currAnswer != "Infinity") valStack.push(currAnswer);
-            newVal = false; 
-            return;
         }
+        newVal.push(button.textContent);
+        valStack.push(parseFloat(newVal.join('')));
+        console.log("Starting infix to postfix conversion: (Infix) " + valStack);
+
+        //Convert to postfix 
+        let output = infixToPostfix(valStack);
+        console.log("Operating on postfix expression: (Postfix) " + output);
+
+        //Calc postfix 
+        expression = operate(output);
+        console.log("Calculated: " + expression);
+        currAnswer = parseFloat(expression.toFixed(3));
+        input.value = (parseFloat(expression.toFixed(3)) == "Infinity") ? "Yea right" : parseFloat(expression.toFixed(3)); // No dividing by 0
+        console.log(" <----- DONE -----> ");
+        valStack = [];
+        if (currAnswer != "Infinity") valStack.push(currAnswer);
+        newVal = false; 
+        return;
     });
 });
 
