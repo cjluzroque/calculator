@@ -17,6 +17,9 @@ let currAnswer = false; // Will hold previous answer
 const calc = document.querySelector('.calc');
 const buttons = document.querySelectorAll('button');
 
+input.addEventListener("keydown", (event) => {
+    console.log(event.key);
+});
 
 buttons.forEach(button => {
     button.addEventListener("click", function () {
@@ -24,56 +27,31 @@ buttons.forEach(button => {
 
         //Handling "Clear All"
         if (button.textContent == "AC") {
-            if (valStack) {
-                valStack = [];
-                newVal = [];
-                dec = false;
-                input.value = '';
-                expression = '';
-                console.log("Clearing All - valStack = " + valStack);
-                return;
-            }
+            clearAll();
             return;
         }
 
         //Handling "Clear Last"
         if (button.textContent == "C") {
-            if (newVal) {
-                expression = expression.slice(0, 0-newVal.length);
-                input.value = expression;
-                newVal = [];
-                dec = false;
-                console.log("Clearing newVal - newVal = " + newVal);
-                return;
-            }
+            clear();
             return;
         } 
 
         //Adding text to display 
-        expression += button.textContent;
-        input.value = expression;
+        if (!(button.textContent == "=")) {
+            expression += button.textContent;
+            input.value = expression;
+        }
 
         //Handling decimal
         if (button.textContent == ".") {
-            if (dec) return;
-            newVal.push(button.textContent);
-            console.log("Value is a decimal");
-            dec = true;
+            addDecimal();
             return;
         }
 
         //Handling numbers
         if (numbers.includes(button.textContent)) {
-            if (currAnswer) {
-                valStack = [];
-                currAnswer = false;
-                console.log("Clear answer as new input");
-                newVal = [button.textContent];
-                expression = button.textContent;
-                input.value = expression;
-                return;
-            }
-            newVal.push(button.textContent);
+            newNumber(button.textContent);
             return;
         }
 
@@ -99,15 +77,7 @@ buttons.forEach(button => {
 
         //Handling operators
         if (operators.includes(button.textContent)) {
-            currAnswer = false;
-            if (newVal) {
-                valStack.push(parseFloat(newVal.join('')));
-                console.log("there is a newVal");
-            }
-            valStack.push(button.textContent);
-            console.log("Added " + newVal + " to " + valStack);
-            newVal = [];
-            dec = false;
+            newOperator(button.textContent);
             return;
         }
 
@@ -133,6 +103,70 @@ buttons.forEach(button => {
     });
 });
 
+
+//Function for Clear All
+function clearAll() {
+    if (valStack) {
+        valStack = [];
+        newVal = [];
+        dec = false;
+        input.value = '';
+        expression = '';
+        console.log("Clearing All - valStack = " + valStack);
+        return;
+    }
+    return;
+}
+
+//Function for Clear
+function clear() {
+    if (newVal) {
+        expression = expression.slice(0, 0-newVal.length);
+        input.value = expression;
+        newVal = [];
+        dec = false;
+        console.log("Clearing newVal - newVal = " + newVal);
+        return;
+    }
+    return;
+}
+
+//Function for DECIMAL input 
+function addDecimal () {
+    if (dec) return;
+    newVal.push(".");
+    console.log("Value is a decimal");
+    dec = true;
+    return;
+}
+
+//Function for NUMBER input 
+function newNumber (number) {
+    if (currAnswer) {
+        valStack = [];
+        currAnswer = false;
+        newVal = [number];
+        expression = number;
+        input.value = expression;
+        return;
+    }
+    newVal.push(number);
+    return;
+}
+
+//Function for OPERATOR input 
+function newOperator(operator) {
+    currAnswer = false;
+    if (newVal) {
+        valStack.push(parseFloat(newVal.join('')));
+        console.log("there is a newVal");
+    }
+    valStack.push(operator);
+    console.log("Added " + newVal + " to " + valStack);
+    newVal = [];
+    dec = false;
+    return;
+}
 
 //Convert infix to postix 
 function infixToPostfix(s) {
