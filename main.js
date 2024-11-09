@@ -115,6 +115,7 @@ buttons.forEach(button => {
     button.addEventListener("click", function () {
         console.log("Input: " + button.textContent);  
 
+        
         //Handling "Clear All"
         if (button.textContent == "AC") {
             clearAll();
@@ -161,24 +162,35 @@ buttons.forEach(button => {
         }
 
         //When entering = it will push the last value into valStack
-        newVal.push(button.textContent);
-        valStack.push(parseFloat(newVal.join('')));
-        console.log("Starting infix to postfix conversion: (Infix) " + valStack);
+        if (button.textContent == "=") {
 
-        //Convert to postfix 
-        let output = infixToPostfix(valStack);
-        console.log("Operating on postfix expression: (Postfix) " + output);
+            if (valStack.length === 0 && newVal.length === 0) {
+                return;
+            } else {
+                newVal.push(button.textContent);
+                valStack.push(parseFloat(newVal.join('')));
+                console.log("Starting infix to postfix conversion: (Infix) " + valStack);
 
-        //Calc postfix 
-        expression = operate(output);
-        console.log("Calculated: " + expression);
-        currAnswer = parseFloat(expression.toFixed(3));
-        input.value = (parseFloat(expression.toFixed(3)) == "Infinity") ? "Yea right" : parseFloat(expression.toFixed(3)); // No dividing by 0
-        console.log(" <----- DONE -----> ");
-        valStack = [];
-        valStack.push(currAnswer);
-        newVal = false; 
-        return;
+                //Convert to postfix 
+                let output = infixToPostfix(valStack);
+                console.log("Operating on postfix expression: (Postfix) " + output);
+
+                //Calc postfix 
+                expression = operate(output);
+                console.log("Calculated: " + expression);
+                currAnswer = parseFloat(expression.toFixed(3));
+                input.value = (parseFloat(expression.toFixed(3)) == "Infinity") ? "Yea right" : parseFloat(expression.toFixed(3)); // No dividing by 0
+                console.log(" <----- DONE -----> ");
+                valStack = [];
+                valStack.push(currAnswer);
+                newVal = false; 
+                return;
+            }
+            
+        }
+        
+
+        
     });
 });
 
@@ -255,6 +267,11 @@ function newParenthesis(parens) {
 //Function for OPERATOR input 
 function newOperator(operator) {
     currAnswer = false;
+    if (valStack == []) {
+        input.value = '';
+        return;
+    }
+        
     if (newVal) {
         valStack.push(parseFloat(newVal.join('')));
         console.log("there is a newVal");
