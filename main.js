@@ -157,7 +157,7 @@ buttons.forEach(button => {
         expression = operate(output);
         console.log("Calculated: " + expression);
         currAnswer = parseFloat(expression.toFixed(3));
-        input.value = parseFloat(expression.toFixed(3));   
+        input.value = (parseFloat(expression.toFixed(3)) == "Infinity") ? "Yea right" : parseFloat(expression.toFixed(3)); // No dividing by 0
         console.log(" <----- DONE -----> ");
         valStack = [];
         valStack.push(currAnswer);
