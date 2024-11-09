@@ -15,8 +15,7 @@ let valStack = []; // Hold operands
 let newVal = []; // Hold value 
 let currAnswer = false; // Will hold previous answer
 
-const calc = document.querySelector('.calc');
-const buttons = document.querySelectorAll('button');
+const buttons = document.querySelectorAll('.button');
 
 document.addEventListener("keydown", (event) => { 
     input.focus();
@@ -93,6 +92,21 @@ input.addEventListener("keydown", (event) => {
         newVal = false; 
         return;
     }
+});
+
+buttons.forEach(button => {
+    button.addEventListener("mousedown", function () {
+        button.classList.remove("noTouch");
+        button.classList.add("touch");
+
+    });
+});
+
+buttons.forEach(button => {
+    button.addEventListener("mouseup", function () {
+        button.classList.remove("touch");
+        button.classList.add("noTouch");
+    });
 });
 
 //Handling OSD buttons 
