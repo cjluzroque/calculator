@@ -74,6 +74,9 @@ input.addEventListener("keydown", (event) => {
         }
 
         //When entering = it will push the last value into valStack
+        if (valStack.length === 0 && newVal.length === 0) {
+            return;
+        }
         newVal.push(event.key);
         valStack.push(parseFloat(newVal.join('')));
         console.log("Starting infix to postfix conversion: (Infix) " + valStack);
@@ -130,7 +133,8 @@ buttons.forEach(button => {
 
         //Adding text to display 
         if (!(button.textContent == "=")) {
-            if ((button.textContent == ".") && (newVal = [])) expression = "0";
+            if ((button.textContent == ".") && (newVal.length === 0)) expression = "0";
+            if (operators.includes(button.textContent) && (newVal.length === 0)) return;
             expression += button.textContent;
             input.value = expression;
         }
@@ -162,35 +166,28 @@ buttons.forEach(button => {
         }
 
         //When entering = it will push the last value into valStack
-        if (button.textContent == "=") {
+        if (valStack.length === 0 && newVal.length === 0) {
+            return;
+        } else {
+            newVal.push(button.textContent);
+            valStack.push(parseFloat(newVal.join('')));
+            console.log("Starting infix to postfix conversion: (Infix) " + valStack);
 
-            if (valStack.length === 0 && newVal.length === 0) {
-                return;
-            } else {
-                newVal.push(button.textContent);
-                valStack.push(parseFloat(newVal.join('')));
-                console.log("Starting infix to postfix conversion: (Infix) " + valStack);
+            //Convert to postfix 
+            let output = infixToPostfix(valStack);
+            console.log("Operating on postfix expression: (Postfix) " + output);
 
-                //Convert to postfix 
-                let output = infixToPostfix(valStack);
-                console.log("Operating on postfix expression: (Postfix) " + output);
-
-                //Calc postfix 
-                expression = operate(output);
-                console.log("Calculated: " + expression);
-                currAnswer = parseFloat(expression.toFixed(3));
-                input.value = (parseFloat(expression.toFixed(3)) == "Infinity") ? "Yea right" : parseFloat(expression.toFixed(3)); // No dividing by 0
-                console.log(" <----- DONE -----> ");
-                valStack = [];
-                valStack.push(currAnswer);
-                newVal = false; 
-                return;
-            }
-            
+            //Calc postfix 
+            expression = operate(output);
+            console.log("Calculated: " + expression);
+            currAnswer = parseFloat(expression.toFixed(3));
+            input.value = (parseFloat(expression.toFixed(3)) == "Infinity") ? "Yea right" : parseFloat(expression.toFixed(3)); // No dividing by 0
+            console.log(" <----- DONE -----> ");
+            valStack = [];
+            if (currAnswer != "Infinity") valStack.push(currAnswer);
+            newVal = false; 
+            return;
         }
-        
-
-        
     });
 });
 
