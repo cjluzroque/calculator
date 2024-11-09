@@ -6,6 +6,7 @@ const input = document.querySelector('input');
 const numbers = "1234567890";
 const operators = "+-/*";
 const parenthesis = "()";
+const other = ".=";
 let dec = false;
 
 // Building infix expression 
@@ -17,10 +18,80 @@ let currAnswer = false; // Will hold previous answer
 const calc = document.querySelector('.calc');
 const buttons = document.querySelectorAll('button');
 
-input.addEventListener("keydown", (event) => {
-    console.log(event.key);
+document.addEventListener("keydown", (event) => { 
+    input.focus();
 });
 
+//Handling keyboard events 
+input.addEventListener("keydown", (event) => { 
+    if ((numbers.includes(event.key)) || 
+        (operators.includes(event.key)) || 
+        (other.includes(event.key)) || 
+        (event.key == "Backspace") || 
+        (event.key == "Enter")) {
+        console.log("Input: " + event.key);  
+
+        //Handling "Clear Last"
+        if (event.key == "Backspace") {
+            clear();
+            return;
+        } 
+
+        //Adding text to display 
+        if (!((event.key == "=") || (event.key == "Enter"))) {
+            expression += event.key;
+            input.value = expression;
+        }
+
+        //Handling decimal
+        if (event.key == ".") {
+            addDecimal();
+            return;
+        }
+
+        //Handling numbers
+        if (numbers.includes(event.key)) {
+            newNumber(event.key);
+            return;
+        }
+
+        /*
+        //Handling parenthesis
+        if (parenthesis.includes(event.key)) {
+            newParenthesis(event.key);
+            return;
+        }
+        */
+
+        //Handling operators
+        if (operators.includes(event.key)) {
+            newOperator(event.key);
+            return;
+        }
+
+        //When entering = it will push the last value into valStack
+        newVal.push(event.key);
+        valStack.push(parseFloat(newVal.join('')));
+        console.log("Starting infix to postfix conversion: (Infix) " + valStack);
+
+        //Convert to postfix 
+        let output = infixToPostfix(valStack);
+        console.log("Operating on postfix expression: (Postfix) " + output);
+
+        //Calc postfix 
+        expression = operate(output);
+        console.log("Calculated: " + expression);
+        currAnswer = parseFloat(expression.toFixed(3));
+        input.value = parseFloat(expression.toFixed(3));   
+        console.log(" <----- DONE -----> ");
+        valStack = [];
+        valStack.push(currAnswer);
+        newVal = false; 
+        return;
+    }
+});
+
+//Handling OSD buttons 
 buttons.forEach(button => {
     button.addEventListener("click", function () {
         console.log("Input: " + button.textContent);  
@@ -58,20 +129,8 @@ buttons.forEach(button => {
         /*
         //Handling parenthesis
         if (parenthesis.includes(button.textContent)) {
-            if (newVal == []) {
-                valStack.push(button.textContent);
-            } else {
-                if (newVal.includes('.')) {
-                    valStack.push(parseFloat(newVal.join('')));
-                } else {
-                    valStack.push(parseInt(newVal.join('')));
-                }
-                valStack.push(button.textContent);
-                console.log("Added " + newVal + " to " + valStack);
-                newVal = [];
-                dec = false;
-                return;
-            } 
+            newParenthesis(button.textContent);
+            return;
         }
         */
 
@@ -152,6 +211,24 @@ function newNumber (number) {
     }
     newVal.push(number);
     return;
+}
+
+//FUNCTION for PARENTHESIS input 
+function newParenthesis(parens) {
+    if (newVal == []) {
+        valStack.push(parens);
+    } else {
+        if (newVal.includes('.')) {
+            valStack.push(parseFloat(newVal.join('')));
+        } else {
+            valStack.push(parseInt(newVal.join('')));
+        }
+        valStack.push(parens);
+        console.log("Added " + newVal + " to " + valStack);
+        newVal = [];
+        dec = false;
+        return;
+    } 
 }
 
 //Function for OPERATOR input 
