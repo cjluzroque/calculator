@@ -223,7 +223,6 @@ function clear() {
 
 //Function for DECIMAL input 
 function addDecimal () {
-    if (dec) return;
     if (newVal == []) newVal.push("0");
     newVal.push(".");
     console.log("Value is a decimal");
