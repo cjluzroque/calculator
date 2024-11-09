@@ -5,6 +5,7 @@ const input = document.querySelector('input');
 
 const numbers = "1234567890";
 const operators = "+-/*";
+const parenthesis = "()";
 let dec = false;
 
 // Building infix expression 
@@ -41,13 +42,27 @@ buttons.forEach(button => {
         if (numbers.includes(button.textContent)) {
             newVal.push(button.textContent);
             return;
-        } 
-        if (operators.includes(button.textContent)) {
-            if (newVal.includes('.')) {
-                valStack.push(parseFloat(newVal.join('')));
+        }
+        /*
+        if (parenthesis.includes(button.textContent)) {
+            if (newVal == []) {
+                valStack.push(button.textContent);
             } else {
-                valStack.push(parseInt(newVal.join('')));
-            }
+                if (newVal.includes('.')) {
+                    valStack.push(parseFloat(newVal.join('')));
+                } else {
+                    valStack.push(parseInt(newVal.join('')));
+                }
+                valStack.push(button.textContent);
+                console.log("Added " + newVal + " to " + valStack);
+                newVal = [];
+                dec = false;
+                return;
+            } 
+        }
+        */
+        if (operators.includes(button.textContent)) {
+            valStack.push(parseFloat(newVal.join('')));
             valStack.push(button.textContent);
             console.log("Added " + newVal + " to " + valStack);
             newVal = [];
