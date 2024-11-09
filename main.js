@@ -41,7 +41,7 @@ input.addEventListener("keydown", (event) => {
         } 
 
         //Adding text to display 
-        if (!(event.key == "=")) {
+        if (!(event.key == "Enter")) {
             if ((event.key == ".") && (newVal.length === 0)) expression = "0";
             if (operators.includes(event.key) && (newVal.length === 0)) return;
             expression += event.key;
